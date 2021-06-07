@@ -1,4 +1,4 @@
-package LeetCode.QuestionEveryday;
+package MovingBricks.QuestionEveryday;
 
 import java.util.Arrays;
 

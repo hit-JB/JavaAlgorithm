@@ -1,11 +1,6 @@
-package LeetCode.QuestionEveryday;
+package MovingBricks.QuestionEveryday;
 
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.print.attribute.standard.JobImpressionsSupported;
-import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedTransferQueue;
 
 public class Sol {
     public static void main(String[] args){
