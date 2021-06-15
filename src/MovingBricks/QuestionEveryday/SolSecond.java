@@ -1104,6 +1104,5 @@ public class SolSecond {
         }
         return row[i] == target || row[j] == target;
     }
-    
 
  }
