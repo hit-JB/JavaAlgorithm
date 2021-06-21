@@ -7,9 +7,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class SolThree {
     public static void main(String[] args){
         SolThree sol = new SolThree();
-        Node root = new Node(1,new Node(2,new Node(4),new Node(5)),
-                new Node(3,new Node(6),new Node(7)));
-        root = sol.connect(root);
+        int[] profit = {1,2,3,4,5};
+        System.out.println(sol.maxProfitIII(profit));
 
     }
     public void sortColors(int[] nums) {
@@ -958,5 +957,69 @@ public class SolThree {
         for(int e:dp[dp.length-1])
             min = Math.min(min,e);
         return  min;
+    }
+    public int maxProfit(int[] prices) {
+        Stack<Integer> S = new Stack<>();
+        int max = Integer.MIN_VALUE;
+        for(int e:prices)
+        {
+            if(S.isEmpty())
+                S.push(e);
+            else
+            {
+                int top = S.peek();
+                max = Math.max(max,e-top);
+                if(e < top)
+                {
+                    S.pop();
+                    S.push(e);
+                }
+            }
+        }
+        return Math.max(max, 0);
+    }
+    public int maxProfitII(int[] prices) {
+        int max = 0;
+        int i=0;
+        int start,end;
+        while(i<prices.length-1)
+        {
+            while(i+1 < prices.length && prices[i+1]<prices[i])
+                i++;
+            start = i;
+            while(i+1 < prices.length && prices[i+1] >=prices[i])
+                i++;
+            end = i;
+            max += prices[end]
+                    - prices[start];
+        }
+        return max;
+    }
+    public int maxProfitIII(int[] prices) {
+        if(prices.length==0)
+            return 0;
+        int[] dpFirst = new int[prices.length+1],
+                dpSecond = new int[prices.length+1];
+        dpFirst[0] = 0;
+        dpFirst[1] = 0;
+        int min = prices[0];
+        for(int i=1;i<prices.length;i++)
+        {
+            min = Math.min(prices[i],min);
+            dpFirst[i+1] = Math.max(prices[i]-min,dpFirst[i]);
+        }
+        dpSecond[0] = dpFirst[dpFirst.length-1];
+        dpSecond[dpSecond.length-1] = 0;
+        dpSecond[dpSecond.length-2] = 0;
+        int max = prices[prices.length-1];
+        for(int i = prices.length-2;i>0;i--)
+        {
+            max = Math.max(max,prices[i]);
+            dpSecond[i] = Math.max(dpSecond[i+1],max - prices[i]);
+        }
+        max = 0;
+        for(int i=0;i<dpFirst.length;i++)
+            max = Math.max(dpFirst[i] + dpSecond[i],max);
+        return max;
     }
 }
