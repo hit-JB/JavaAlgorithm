@@ -1,41 +1,45 @@
 package JavaAlgorithm.DynamicProgramming;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Dijkstra {
     static final int MAX_VALUE=1000;
     public static void main(String[] args){
-        int[][] map = new int[7][7];
-        MulEle<Integer[],Integer[]> a = new MulEle<>(new Integer[16],new Integer[15]);
+        int[][] map = {{0,10,MAX_VALUE,MAX_VALUE,5},
+                {MAX_VALUE,0,1,MAX_VALUE,2},
+                {MAX_VALUE,MAX_VALUE,0,4,MAX_VALUE},
+                {7,MAX_VALUE,6,0,MAX_VALUE},
+                {MAX_VALUE,3,9,2,0}};
+
+        Map<Integer,Integer> a = new HashMap<>();
+
+        DijkstraAlgorithm(map);
     }
-    public static Map<Integer,Integer> getSol(int[][] map, int home, int school){
-        int[] dist = new int[map.length];
-        for(int i = 0;i<dist.length;i++)
+    public static void DijkstraAlgorithm(int[][] map)
+    {
+        Map<Integer,Integer> s = new HashMap<>();
+        Map<Integer,Integer> u = new HashMap<>();
+        for(int i=0;i<map[0].length;i++) {
+           u.put(i,map[0][i]);
+        }
+
+        while(!u.isEmpty())
         {
-            if(i == home)
-                dist[i] = 0;
-            else
-                dist[i] = MAX_VALUE;
-        }
-        for(int i =0;i<map.length;i++){
-            for(int k = 0; k<map.length ;k++){
+            Set<Map.Entry<Integer,Integer>> a = u.entrySet();
+            List<Map.Entry<Integer,Integer>> sort = new ArrayList<>(a);
+            sort.sort(Comparator.comparingInt(Map.Entry::getValue));
+            Map.Entry<Integer,Integer> e = sort.get(0);
+            u.remove(e.getKey());
+            s.put(e.getKey(),e.getValue());
+            for(Map.Entry<Integer,Integer> adj:u.entrySet())
+            {
+                if(map[e.getKey()][adj.getKey()]!=MAX_VALUE)
+                {
+                    u.put( adj.getKey(),Math.min(adj.getValue(),e.getValue()+map[e.getKey()][adj.getKey()]));
+                }
             }
         }
-        return null;
-    }
-    public static MulEle<Integer,Integer> min(int... a){
-        int min = MAX_VALUE;
-        int id = 0;
-        for(int i =0;i<a.length;i++){
-            if(a[i] < min){
-                min = a[i];
-                id = i;
-            }
-        }
-        return  new MulEle<>(min,id);
+        System.out.println(s);
     }
 }
