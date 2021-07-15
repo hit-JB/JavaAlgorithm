@@ -1,17 +1,21 @@
 package MovingBricks.QuestionEveryday;
 
 import JavaAlgorithm.ComputeGeometry.Jarvis;
+import org.jetbrains.annotations.NotNull;
 
 import javax.rmi.ssl.SslRMIClientSocketFactory;
+import javax.swing.text.StyledEditorKit;
+import java.awt.event.MouseListener;
 import java.rmi.MarshalledObject;
 import java.util.*;
 
 public class SolV {
     public static void main(String[] args)
     {
-        SolV sol = new SolV();
-        int[][] matrix = {{2,1,3},{6,5,4},{7,8,9}};
-        System.out.println(sol.minFallingPathSum(matrix));
+        SolV sol = new SolV();//command = "URR", obstacles = [], x = 3, y = 2
+
+        String s =  "lee(t(c)o)de)";
+        System.out.println(sol.minRemoveToMakeValid(s));
 
 
 
@@ -682,11 +686,7 @@ public class SolV {
             min = Math.min(min,e);
         return min;
     }
-    public int longestAwesome(String s) {//
-        int encode = 0;
-        return 0;
-    }
-    public boolean check(Map<Character,Integer> map){
+    public boolean check(@NotNull Map<Character,Integer> map){
         int count = 0;
         for(Map.Entry<Character,Integer> e: map.entrySet()){
             if(e.getValue() % 2==1)
@@ -695,5 +695,283 @@ public class SolV {
                 return false;
         }
         return true;
+    }
+    public int eraseOverlapIntervals(int[][] intervals) {
+        List<int[]> list = new ArrayList<>(Arrays.asList(intervals));
+        list.sort((e1,e2)->{
+            if(e1[0]>e2[0])
+                return 1;
+            else if(e1[0]==e2[0])
+                return Integer.compare(e1[1],e2[1]);
+            else return -1;
+        });
+        Stack<int[]> stack = new Stack<>();
+        for(int[] e:list){
+            if(stack.isEmpty())
+                stack.push(e);
+            else if(e[1]<=stack.peek()[1]){
+                stack.pop();
+                stack.push(e);
+            }else if(e[0] >= stack.peek()[1])
+                stack.push(e);
+        }
+        return list.size() - stack.size();
+    }
+    public boolean robot(String command, int[][] obstacles, int x, int y) {
+        Map<Integer,Set<Integer>> map = new HashMap<>();
+        for(int[] e:obstacles){
+            if(!map.containsKey(e[0])) {
+                HashSet<Integer> set = new HashSet<>();
+                set.add(e[1]);
+                map.put(e[0], new HashSet<>(set));
+            }
+            else{
+                map.get(e[0]).add(e[1]);
+            }
+        }
+        int row=0,column = 0,i=0;
+        while(row<=x && column<=y){
+            if(map.get(row)!=null) { if(map.get(row).contains(column))
+                return false;
+            }
+            if(row==x && column==y)
+                return true;
+            char c = command.charAt(i);
+            if(c=='U')
+                column++;
+            else
+                row++;
+            i = (i+1) % (command.length());
+        }
+        return false;
+    }
+    public int findKthLargest(int[] nums, int k) {
+        List<Integer> list = new ArrayList<>();
+        for(int e:nums)
+            list.add(e);
+        list.sort(Integer::compare);
+        return list.get(list.size()-k);
+    }
+    static class Solution {
+        Random random = new Random();
+
+        public int findKthLargest(int[] nums, int k) {
+            return quickSelect(nums, 0, nums.length - 1, nums.length - k);
+        }
+
+        public int quickSelect(int[] a, int l, int r, int index) {
+            int q = randomPartition(a, l, r);
+            if (q == index) {
+                return a[q];
+            } else {
+                return q < index ? quickSelect(a, q + 1, r, index) : quickSelect(a, l, q - 1, index);
+            }
+        }
+
+        public int randomPartition(int[] a, int l, int r) {
+            int i = random.nextInt(r - l + 1) + l;
+            swap(a, i, r);
+            return partition(a, l, r);
+        }
+
+        public int partition(int[] a, int l, int r) {
+            int x = a[r], i = l - 1;
+            for (int j = l; j < r; ++j) {
+                if (a[j] <= x) {
+                    swap(a, ++i, j);
+                }
+            }
+            swap(a, i + 1, r);
+            return i + 1;
+        }
+
+        public void swap(int[] a, int i, int j) {
+            int temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+        }
+    }
+    public boolean isMagic(int[] target) {
+        List<Integer> list = new ArrayList<>();
+        for(int i=1;i<=target.length;i++)
+            list.add(i);
+        List<Integer> even = new ArrayList<>();
+        for(int i=1;i<list.size() ;i++){
+            even.add(list.remove(i));
+        }
+        even.addAll(new ArrayList<>(list));
+        list = new ArrayList<>(even);even.clear();
+        int k=list.size();
+        int size = list.size();
+        for(int i=0;i<size;i++)
+            if(list.get(0)!=target[i])
+            {
+                k=i;
+                break;
+            }else{
+                list.remove(0);
+            }
+        if(k==0)
+            return false;
+        int index = k;
+        while(index<target.length){
+            for(int i=1;i<list.size();i++){
+                even.add(list.remove(i));
+            }
+            even.addAll(new ArrayList<>(list));
+            list = new ArrayList<>(even);even.clear();
+            if(list.size() > k) {
+                for (int j = 0; j < k; j++) {
+                    if(list.remove(0)!=target[index++])
+                        return false;
+                }
+            }else{
+                while (index<target.length){
+                    if(list.remove(0)!=target[index++])
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+    public List<String> movingBricks(int map,int x,int y){//人:1,箱子:2,火:3水:4
+        List<String> ret = new ArrayList<>();
+        Map<Integer,Set<Integer>> visited = new HashMap<>();
+        return null;
+    }
+    public void dfsPath(int map,int x,int y, Map<Integer,Set<Integer>> visited){
+        int[][] direction = new int[][]{{0,-1},{1,0},{0,1},{-1,0}};
+    }
+    public int encode(int size,int x,int y)
+    {
+        return x * size +y;
+    }
+    public int hIndex(int[] citations) {
+        if(citations.length==1)
+            return citations[0]>=1?1:0;
+        int size = citations.length;
+        int left = 0,right = citations.length,mid = left + (right-left) /2;
+        while(right-left >1){
+            if(citations[mid] < size-mid){
+                left = mid;
+                mid = left + (right-left) /2;
+            }else{
+                if(citations[mid-1]<size-mid+1)
+                    return size-mid;
+                if(citations[mid-1]==size-mid+1)
+                    return size-mid+1;
+                right = mid;
+                mid = left + (right-left) /2;
+            }
+        }
+        return citations[left]>=size-left?size-left:size-right;
+    }
+    public int lengthOfLIS(int[] nums) {
+        //10,9,2,5,3,7,101,18
+        int[] dp = new int[nums.length+1];
+        dp[0]=1;
+        int max = 1;
+        for(int i=1;i<nums.length;i++){
+            dp[i] =1;
+            for(int j=i-1;j>=0;j--)
+            {
+                if(nums[j]<=nums[i]){
+                   if(nums[i]==nums[j])
+                       dp[i] = Math.max(dp[i],dp[j]);
+                   else{
+                       dp[i] = Math.max(dp[i],dp[j]+1);
+                   }
+                }
+                max = Math.max(dp[i],max);
+            }
+        }
+        return max;
+    }
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if(k==0)
+            return ret;
+        List<Integer> temp = new ArrayList<>();
+        dfsSumIII(k,n,0,0,temp,ret);
+        return ret;
+    }
+    public void dfsSumIII(int k,int n,int k_,int sum,List<Integer> integers,List<List<Integer>> ret){
+        if(k_==k){
+            if(sum ==n)
+                ret.add(new ArrayList<>(integers));
+            return;
+        }
+        int top = integers.size()>0?integers.get(integers.size()-1):0;
+        for(int e=top+1;e<=9;e++){
+            if(sum+e<=n)
+            {
+                integers.add(e);
+                dfsSumIII(k,n,k_+1,sum+e,integers,ret);
+                integers.remove(integers.size()-1);
+            }
+        }
+    }
+    public int minAbsoluteSumDiff(int[] nums1, int[] nums2) {
+
+        long sum=0;
+        for(int i=0;i<nums1.length;i++)
+            sum +=Math.abs(nums1[i]-nums2[i]);
+        if(sum==0)
+            return 0;
+        TreeSet<Integer> set = new TreeSet<>();
+        for(int e:nums1)
+            set.add(e);
+        int max=0;
+        for(int i=0;i<nums1.length;i++){
+            int e = nums2[i];
+            Integer cell = set.ceiling(e);
+            Integer floor = set.floor(e);
+            int min;
+            if(cell==null)
+                min = nums2[i]-floor;
+            else if(floor==null)
+                min = cell-nums2[i];
+            else
+                min = Math.min(cell-nums2[i],nums2[i]-floor);
+            max = Math.max(Math.abs(nums1[i]-nums2[i])-min,max);
+        }
+        return (int) ((sum-max) % (Math.pow(10,9) + 7));
+    }
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode first = head,second = head;
+        for(int i=0;i<n;i++)
+            first = first.next;
+        ListNode prev=null;
+        while(first!=null)
+        {
+            first=first.next;
+            prev = second;
+            second=second.next;
+        }
+        if(prev==null)
+            return head.next;
+        prev.next = second.next;
+        return head;
+    }
+    public String minRemoveToMakeValid(String s) {
+        Stack<Map.Entry<Character,Integer>> stack = new Stack<>();
+        for(int i =0;i<s.length();i++){
+            char c = s.charAt(i);
+            if(c=='(')
+                stack.push(Map.entry('(',i));
+            else if(c==')') {
+                if (!stack.isEmpty() && stack.peek().getKey() == '(')
+                    stack.pop();
+                else
+                    stack.push(Map.entry(')',i));
+            }
+        }
+        StringBuilder builder = new StringBuilder(s);
+        for(Map.Entry<Character,Integer> entry:stack){
+            int index = entry.getValue();
+            builder.replace(index,index+1," ");
+        }
+        return builder.toString().replace(" ","");
+
     }
 }
