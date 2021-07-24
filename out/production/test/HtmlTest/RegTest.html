@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RegTest</title>
+    <script type="text/javascript">
+        window.onload= function () {
+            all = function () {
+                alert("hellow world");
+                var hobbies = document.getElementsByName("hobby");
+                alert(hobbies);
+                for (var i = 0; i < hobbies.length; i++) {
+                    hobbies[i].chcked = true;
+                }
+            }
+            none = function () {
+                var hobbies = document.getElementsByName("hobbies");
+                for (var i = 0; i < hobbies.length; i++) {
+                    hobbies[i].chcked = false;
+                }
+            }
+            reverse = function () {
+                var hobby = document.getElementById("input2");
+                var span = document.getElementById("span2");
+                span.innerHTML = hobby.value;
+                hobby.value = hobby.value === "on" ? "off" : "on";
+            }
+            check = function () {
+                var input = document.getElementsByTagName("input");
+                alert(input);
+                var patt = /w{6,}/
+                if (patt.test(input.value)) {
+                    alert("leggle");
+                } else {
+                    alert("illigle");
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+
+password<input type="text" value="password">
+<button onclick="check()">check</button><br/>
+
+c++<input name="hobbies" type="checkbox" id="input2" >
+<button onclick="reverse()">reverse</button>
+<button onclick="all()">all</button>
+<span id="span2" style="color: red"></span>
+</body>
+</html>
