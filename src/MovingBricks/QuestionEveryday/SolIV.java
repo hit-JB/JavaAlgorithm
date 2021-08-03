@@ -1,5 +1,8 @@
 package MovingBricks.QuestionEveryday;
 
+import com.sun.source.tree.Tree;
+
+import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -7,8 +10,8 @@ import java.util.List;
 public class SolIV {
     public static void main(String[] args){
         SolIV sol = new SolIV();
-        int[] nums = {1,2,10,5,7};
-        System.out.println(sol.removeOccurrences("daabcbaabcbc","abc"));
+        int[] pushed = {1,2}, popped = {2,2};
+        System.out.println(sol.validateStackSequences(pushed,popped));
 
     }
     public SolIV(){}
@@ -631,4 +634,337 @@ public class SolIV {
         }
         return false;
     }
+    public int halfQuestions(int[] questions) {
+        Map<Integer,Integer> map = new HashMap<>();
+        for(int e:questions){
+            map.put(e, map.getOrDefault(e,0)+1);
+        }
+        List<Map.Entry<Integer,Integer>> list = new ArrayList<>(map.entrySet());
+        list.sort((e1,e2)-> -Integer.compare(e1.getValue(),e2.getValue()));
+        int count = 0;
+        int sum = 0;
+        int size = questions.length;
+        for(Map.Entry<Integer,Integer> e:list){
+            count++;
+            sum+=e.getValue();
+            if(sum>= size / 2)
+                return count;
+        }
+        return map.size();
+    }
+    public int largestArea(String[] grid) {
+        int[] area = new int[1];
+        int[][] visited = new int[grid.length][grid[0].length()];
+        for(int i=0;i<grid.length;i++)
+        {
+            String s = grid[i];
+            for(int j=0;j<s.length();j++){
+                if(visited[i][j]==0 && s.charAt(j)!='0')
+                {
+                    boolean[] is = new boolean[]{true};
+                    int[] count = new int[]{1};
+                    dfsLargestArea(i,j,grid,visited,area,is,count);
+                }
+            }
+        }
+        return area[0];
+    }
+    public void dfsLargestArea(int row,int column,
+                               String[] grid,int[][] visited,int[] area,boolean[] is,int[] count){
+        visited[row][column] = 1;
+        int[][] direction = new int[][]{{-1,0},{0,1},{1,0},{0,-1}};
+        for(int k=0;k<4;k++){
+            int next_row = row+direction[k][0];
+            int next_column = column+ direction[k][1];
+            if(next_row<0 || next_row>=grid.length || next_column <0 || next_column >= grid[0].length()
+            || grid[next_row].charAt(next_column)=='0'){
+                is[0] = false;
+            } else if(visited[next_row][next_column] == 0 && grid[next_row].charAt(next_column)==grid[row].charAt(column))
+            {
+                count[0]++;
+                dfsLargestArea(next_row,next_column,grid,visited,area,is,count);
+            }
+        }
+        if(is[0])
+            area[0] = Math.max(area[0],count[0]);
+    }
+    public int eatenApples(int[] apples, int[] days) {
+        int sum = 0;
+        int temp = 0;
+        int start = 0;
+        int i =0;
+       while(i<apples.length){
+            if(temp>=i-start){
+                if(temp==i-start)
+                    temp += Math.min(apples[i],days[i]);
+               else
+                {
+                    int remain = 0;
+                    if(apples[i]!=0) {
+                        if (apples[i] >= days[i])
+                           remain= days[i] - 1;
+                        else
+                            remain= apples[i];
+                    }
+                    temp = Math.max(i-start+1+remain,temp);
+                }
+            }
+            else{
+                sum += temp;
+                start = i;
+                temp = Math.min(apples[i],days[i]);
+            }
+            i++;
+        }
+        if(temp>= i-start)
+            sum+=temp;
+        return sum;
+    }
+    public int regionsBySlashes(String[] grid) {
+        return 0;
+    }
+    public int minOperations(int[] nums) {
+        Stack<Integer> increase = new Stack<>();
+        int operations = 0;
+        for(int e:nums){
+            if(increase.isEmpty())
+                increase.add(e);
+            else{
+                while(e<=increase.peek())
+                {
+                    e++;
+                    operations++;
+                }
+                increase.push(e);
+            }
+        }
+        return operations;
+    }
+    public int[] countPoints(int[][] points, int[][] queries) {
+        int[] ret = new int[queries.length];
+        int i =0;
+        for(int[] circle:queries){
+            double x = circle[0],y = circle[1], r= circle[2];
+            int count = 0;
+            for(int[] point:points){
+                double x_p = point[0],y_p = point[1];
+                if(Math.sqrt(Math.pow((x-x_p),2) + Math.pow(y-y_p,2))<=r)
+                    count++;
+            }
+            ret[i] = count;
+            i++;
+        }
+        return ret;
+    }
+    public int[] getMaximumXor(int[] nums, int maximumBit) {
+        int num = 0;
+        int[] ret = new int[nums.length];
+        for(int e:nums)
+            num ^=e;
+        for(int i=nums.length;i>0;){
+            ret[nums.length-i] = maxXor(num,maximumBit);
+            i--;
+            num ^=nums[i];
+        }
+        return ret;
+    }
+    public int maxXor(int e,int maxBit){
+        int num = 0;
+        for(int i=maxBit-1;i>=0;i--){
+            if((e>>i & 1) ==0)
+               num = 2* num +1;
+            else
+                num = 2*num;
+        }
+        return num;
+    }
+    public int titleToNumber(String columnTitle) {
+        int sum = 0;
+        for(char c:columnTitle.toCharArray()){
+            sum = sum * 27 + (c-'A'+1);
+        }
+        return sum;
+    }
+    public int cuttingRope(int n) {
+        int [] dp = new int[n];
+        for(int i=1;i<n;i++)
+        {
+            for(int j=i-1;j>=i / 2;j--){
+                dp[i] = Math.max((j+1) * (i-j),Math.max(dp[j] * (i-j),dp[i]));
+            }
+        }
+        return dp[n-1];
+    }
+    public static class CQueue {
+        private Stack<Integer> save = new Stack<>(),delete = new Stack<>();
+        public CQueue() {
+
+        }
+
+        public void appendTail(int value) {
+            save.add(value);
+        }
+
+        public int deleteHead() {
+            if(delete.isEmpty())
+            {
+                while(!save.isEmpty())
+                    delete.add(save.pop());
+                return delete.size()>0?delete.pop():-1;
+            }
+            return delete.pop();
+        }
+    }
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if(B==null)return true;
+        if(A.left!=null){
+            boolean left = isSubStructure(A.left,B);
+            if(left)
+                return true;
+        }
+        if(isSubTree(A,B))
+            return true;
+        if(A.right!=null)
+        {
+            return isSubStructure(A.right,B);
+        }
+        return false;
+    }
+    public boolean isSubTree(TreeNode a, TreeNode b){
+        if(a==null)
+            return false;
+        boolean left = true,right = true;
+        if(a.val!=b.val)
+            return false;
+        if(b.left!=null)
+            left = isSubTree(a.left,b.left);
+        if(b.right!=null)
+            right = isSubTree(a.right,b.right);
+        return left && right;
+    }
+    public int findNthDigit(int n) {
+        if(n<10)
+            return n;
+        long sum = 10;
+        long  pow = 10;
+        long count = 2;
+        long num = 9;
+        while(sum<=n) {
+            sum += 9 * pow * count;
+            num = num + pow * 9;
+            pow = pow *10;
+            count ++;
+        }
+        sum = sum-(pow / 10) * (count - 1) * 9;
+        num = num - (pow / 10) * 9;
+        long remain = n-sum+1;
+        long tail = remain / (count - 1);
+        long  t = remain - tail * (count-1);
+        if(t==0)
+        {
+            String s = String.valueOf(num + tail);
+            return s.charAt(s.length()-1)-'0';
+        }
+        else{
+            String s = String.valueOf(num+tail+1);
+            return s.charAt((int)t-1)-'0';
+        }
+    }
+    public long numberOfWeeks(int[] milestones) {
+        if(milestones.length<1)
+            return 1;
+        long sum = 0;
+        for(int e:milestones)sum+=e;
+        int length = milestones.length;
+        long[] dp = new long[length+1];
+        long[] dp_= new long[length+1];
+        Arrays.fill(dp, 0);
+        Arrays.fill(dp_,0);
+        for(int i=1;i<=sum / 2;i++){
+            for(int j=1;j<dp.length;j++){
+                dp[j] = Math.max(dp[j-1],dp_[j]);
+                if(dp[j-1] + milestones[j-1] <= i)
+                    dp[j]= Math.max(dp[j-1] + milestones[j-1],dp[j]);
+//                if(dp_[j] + milestones[j-1] <= i)
+//                    dp[j] = Math.max(dp_[j] + milestones[j-1],dp[j]);
+            }
+            System.arraycopy(dp,0,dp_,0,dp.length);
+        }
+        long count =  dp[dp.length-1];
+        long another = sum -count;
+        if(count == another)
+            return count * 2L;
+        else
+            return Math.min(count,another) * 2L + 1;
+    }
+    public int networkDelayTime(int[][] times, int n, int k) {
+        int[][] map = new int[n][n];
+        for (int[] ints : map) Arrays.fill(ints, Integer.MAX_VALUE);
+        for(int[] e:times) {
+            map[e[0]-1][e[1]-1] = e[2];
+        }
+        Map<Integer,Integer> s = new HashMap<>();
+        Map<Integer,Integer> u = new HashMap<>();
+        for(int i=0;i<map[0].length;i++) {
+            u.put(i,map[k-1][i]);
+        }
+        u.put(k-1,0);
+        while(!u.isEmpty())
+        {
+            List<Map.Entry<Integer,Integer>> sort = new ArrayList<>(u.entrySet());
+            sort.sort(Comparator.comparingInt(Map.Entry::getValue));
+            Map.Entry<Integer,Integer> e = sort.get(0);
+            u.remove(e.getKey());
+            s.put(e.getKey(),e.getValue());
+            for(Map.Entry<Integer,Integer> adj:u.entrySet())
+            {
+                if(map[e.getKey()][adj.getKey()]!=Integer.MAX_VALUE)
+                {
+                    u.put( adj.getKey(),Math.min(adj.getValue(),e.getValue()+map[e.getKey()][adj.getKey()]));
+                }
+            }
+        }
+        int max =0;
+        for (Map.Entry<Integer,Integer> e:s.entrySet())
+            max = Math.max(max,e.getValue());
+        return max == Integer.MAX_VALUE?-1:max;
+    }
+    public int[] singleNumbers(int[] nums) {
+        int xor=0;
+        for(int e:nums)
+            xor ^=e;
+        int i=0;
+        while((xor>>i & 1)==0){
+            i++;
+        }
+        int ret = 0;
+        for(int e:nums){
+            if((e>>i & 1)==0)
+                ret ^=e;
+        }
+        return new int[]{ret,xor^ret};
+    }
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Stack<Integer> stack = new Stack<>();
+        int i = 0,j=0;
+        do{
+            while (!stack.isEmpty() && stack.peek() == popped[j]) {
+                stack.pop();
+                j++;
+            }
+            if(i<pushed.length)
+                stack.push(pushed[i]);
+            i++;
+        }while(!stack.isEmpty() && i<=pushed.length);
+        return stack.isEmpty();
+    }
+    public int singleNumber(int[] nums) {
+        int ones = 0, twos = 0;
+        for(int num : nums){
+            ones = ones ^ num & ~twos;
+            twos = twos ^ num & ~ones;
+        }
+        return ones;
+    }
+
 }
